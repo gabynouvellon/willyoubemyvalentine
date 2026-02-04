@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour toi ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0; padding: 0;
+            background: linear-gradient(135deg, #ffe6e6 0%, #ffc3d6 100%);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            font-family: 'Nunito', sans-serif; overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center; background: rgba(255, 255, 255, 0.9);
+            padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(255, 105, 180, 0.2);
+            max-width: 90%; z-index: 10; transition: all 0.5s ease;
+        }
+
+        h1 { font-family: 'Fredoka One', cursive; color: #ff4d6d; }
+
+        /* Galerie */
+        #photo-gallery { display: none; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 20px; }
+        .photo-item { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; opacity: 0; transform: translateY(20px); transition: 0.5s; }
+        .photo-item.show { opacity: 1; transform: translateY(0); }
+
+        /* Boutons */
+        .btn-main {
+            padding: 15px 30px; font-size: 1.2rem; font-family: 'Fredoka One', cursive;
+            border: none; border-radius: 50px; cursor: pointer; transition: 0.3s;
+            background: #ff4d6d; color: white; margin-top: 20px;
+        }
+
+        /* Animation Loufoque de Chargement */
+        #loader-zone { display: none; }
+        .spinner {
+            font-size: 50px; display: inline-block;
+            animation: spin 1s infinite linear, bounce 0.5s infinite alternate;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+
+        #loading-text { font-weight: bold; color: #ff4d6d; margin-top: 15px; min-height: 1.5em; }
+
+        /* Surprise Finale */
+        #step4 img {
+            max-width: 100%; border-radius: 20px;
+            animation: ultraPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.5);
+        }
+        @keyframes ultraPop {
+            0% { transform: scale(0) rotate(-45deg); }
+            80% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .heart { position: fixed; color: #ff4d6d; animation: float 4s linear forwards; pointer-events: none; }
+        @keyframes float { 0% { transform: translateY(100vh); opacity: 1; } 100% { transform: translateY(-10vh); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-card">
+        <div id="step1">
+            <h1>Veux-tu être ma Valentine ? 💖</h1>
+            <button class="btn-main" onclick="celebrate()">OUI ! 😍</button>
+            <button class="btn-main" id="btnNo" style="background:white; color:#ff4d6d; border:2px solid #ff4d6d;" onmouseover="moveButton()">Non 😢</button>
+        </div>
+
+        <div id="step2" style="display:none;">
+            <h1>Bon ça c'est le moment cucu... 🥰</h1>
+            <div id="photo-gallery"></div>
+        </div>
+
+        <div id="step3" style="display:none;">
+            <h1>Attends, il y a un bug...</h1>
+            <button class="btn-main" onclick="startCrazyLoader()">Réparer la surprise ✨</button>
+        </div>
+
+        <div id="loader-zone">
+            <div class="spinner">🍭</div>
+            <div id="loading-text">Initialisation du bonheur...</div>
+        </div>
+
+        <div id="step4" style="display:none;">
+            <h1>TADAAAAAM ! C'est MUSICAAAA ! </h1>
+            <img src="concert.jpg" alt="concert">
+            <p style="font-size: 1.2rem; color: #ff4d6d; font-weight: bold;">(Hope you like it!)</p>
+        </div>
+    </div>
+
+    <script>
+        function moveButton() {
+            const btnNo = document.getElementById('btnNo');
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            btnNo.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+        }
+
+        function celebrate() {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            const gallery = document.getElementById('photo-gallery');
+            gallery.style.display = 'grid';
+
+            for (let i = 1; i <= 8; i++) {
+                const img = document.createElement('img');
+                img.src = `img${i}.jpg`; 
+                img.className = 'photo-item';
+                gallery.appendChild(img);
+                setTimeout(() => img.classList.add('show'), i * 200);
+            }
+            createHearts();
+
+            // Délai réduit à 5 secondes (5000ms)
+            setTimeout(() => {
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = 'block';
+            }, 5000);
+        }
+
+        function startCrazyLoader() {
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('loader-zone').style.display = 'block';
+            
+            const messages = [
+                "Téléchargement de mignonnerie...",
+                "Calcul du niveau d'amour (Erreur : Trop élevé)",
+                "Accordez les guitares...",
+                "Ajustement du prout...",
+                "Surprise arrive à 200km/h..."
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < messages.length) {
+                    document.getElementById('loading-text').innerText = messages[i];
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    showFinalSurprise();
+                }
+            }, 1000);
+        }
+
+        function showFinalSurprise() {
+            document.getElementById('loader-zone').style.display = 'none';
+            document.getElementById('step4').style.display = 'block';
+            setInterval(createHearts, 100); // Pluie de cœurs intense
+        }
+
+        function createHearts() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 4000);
+        }
+    </script>
+</body>
+</html>
